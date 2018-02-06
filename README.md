@@ -2,7 +2,7 @@
 
 BatteryMonitor is(will) be the swiss army knife of battery tasks for GameBoyZero.
 
-Firtly Thank You to @HoolyHoo and @Camble - without there inperasiton and code I would be nowhere.
+Firstly Thank You to @HoolyHoo and @Camble - without there inspiration and code I would be nowhere.
 Please Check out there Repo's
 
 https://github.com/HoolyHoo/gbzbatterymonitor
@@ -41,7 +41,9 @@ https://sudomod.com/forum/viewtopic.php?f=43&t=4858&start=30
 
 # TODO:
 
-Now this is a work in progress and still needs alot of work; things I want to add ASAP.
+### Now this is a work in progress and still needs alot of work; things I want to add ASAP.
+- [ ] Add any contributions in code (i.e. pilfered code) 
+- [ ] Add Licence to each code file
 - [ ] Dynamic Button Config - config buttons in config i.e. presses or held, hold time, GPIO pin, associated function (currently shutdown or monitor)
 - [ ] Create init.d script to tie into Debians services
 - [ ] Integrate Cambles code base into this allowing configuration and use of Cambles SafeShutdown board.
