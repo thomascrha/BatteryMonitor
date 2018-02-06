@@ -10,13 +10,13 @@ https://github.com/Camble/Safe-Power-Monitor
 
 For there Sudomod Threads and related posts:
 
-## @Camble
+### @Camble
 https://sudomod.com/forum/viewtopic.php?f=38&t=2348
 
-## @HoolyHoo
+### @HoolyHoo
 https://www.sudomod.com/forum/viewtopic.php?f=38&t=3699
 
-## Discussion
+### Discussion
 https://sudomod.com/forum/viewtopic.php?f=43&t=4858&start=30
 
 # Features:
@@ -36,7 +36,7 @@ https://sudomod.com/forum/viewtopic.php?f=43&t=4858&start=30
 
 
 # Wiring Diagrams:
-## ADS Wiring for ADS1015 and ADS1115
+### ADS Wiring for ADS1015 and ADS1115
 ![ADS1015](https://i.imgur.com/hsFYtSR.jpg)
 
 # TODO:
