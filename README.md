@@ -43,6 +43,7 @@ https://sudomod.com/forum/viewtopic.php?f=43&t=4858&start=30
 
 ### Now this is a work in progress and still needs alot of work; things I want to add ASAP.
 - [ ] Add any contributions in code (i.e. pilfered code) 
+- [ ] Implement Low Battery Warning System - Flashing Icon and Sound
 - [ ] Add Licence to each code file
 - [ ] Dynamic Button Config - config buttons in config i.e. presses or held, hold time, GPIO pin, associated function (currently shutdown or monitor)
 - [ ] Create init.d script to tie into Debians services
