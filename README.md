@@ -1,4 +1,4 @@
-#About:
+# About:
 
 BatteryMonitor is(will) be the swiss army knife of battery tasks for GameBoyZero.
 
@@ -10,16 +10,16 @@ https://github.com/Camble/Safe-Power-Monitor
 
 For there Sudomod Threads and related posts:
 
-##@Camble
+## @Camble
 https://sudomod.com/forum/viewtopic.php?f=38&t=2348
 
-##@HoolyHoo
+## @HoolyHoo
 https://www.sudomod.com/forum/viewtopic.php?f=38&t=3699
 
-##Discussion
+## Discussion
 https://sudomod.com/forum/viewtopic.php?f=43&t=4858&start=30
 
-#Features:
+# Features:
 
 * My script has several features which I wanted :
 * Daemonised - has a daemon base class that allows POSIX standard Daemon (start|stop|restart|status)
@@ -28,18 +28,18 @@ https://sudomod.com/forum/viewtopic.php?f=43&t=4858&start=30
 * Rather than toggling the icon I've got it stet up on a timer - but will be configurable to be a toggle 
 * As the value changes and it cycles through the percent range it will display the icon i.e. if it was 75% and it drops to 50% the indicator will display the 50% icon
 
-#Compatible Components:
+# Compatible Components:
 
 * ADS1015
 * ADS1115
 * Camble's SafeShutdown Bangood and Powerboost Version (comming soon)
 
 
-#Wiring Diagrams:
-##ADS Wiring for ADS1015 and ADS1115
+# Wiring Diagrams:
+## ADS Wiring for ADS1015 and ADS1115
 ![ADS1015](https://i.imgur.com/hsFYtSR.jpg)
 
-#TODO:
+# TODO:
 
 Now this is a work in progress and still needs alot of work; things I want to add ASAP.
 - [ ] Dynamic Button Config - config buttons in config i.e. presses or held, hold time, GPIO pin, associated function (currently shutdown or monitor)
