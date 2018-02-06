@@ -1,0 +1,18 @@
+button:
+        #set to zero to disable
+        shutdown: 20 #BCM GPIO Pin
+        monitor: 5 #BCM GPIO Pin
+
+agent:
+        pidfile: '/tmp/battery-monitor.pid'
+
+converstion-ratio: 0.01275
+
+png:
+        x: 1200 
+        y: 10
+        path: "/home/pi/BatteryMonitor/Pngview"
+        icon: "/home/pi/BatteryMonitor/icons"
+gain: 1
+
+icon-timeout: 3
