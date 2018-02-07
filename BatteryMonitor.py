@@ -47,11 +47,19 @@ class BatteryMonitor(Daemon):
 		# change this to be implied form the config
 		self.adc = Adafruit_ADS1x15.ADS1015()
                 #create setup_pins method allowing fornamic loading
-                shutdown_btn = Button(int(config['button']['shutdown']))#, hold_time=1)
-                monitor_btn = Button(int(config['button']['monitor'])) #, hold_time=2)
                 self.logger = logfile
+                self.get_buttons
+
                 while True:
                             self.battery_percent()
+                            for buttontype, buttons in self.buttons.items():
+                                    
+                                    for button in buttons:
+                                            if button[1].hold_time > 0:
+                                                    button[1].when_held = config['methods'][buttontype]                                                    
+                                            else:
+                                                    button[1].when_pressed = config['methods'][buttontype]
+                            
                             shutdown_btn.when_pressed = self.shutdown
                             monitor_btn.when_pressed = self.display_icon
         def process_spawner(self, subprocess_call):
@@ -64,6 +72,27 @@ class BatteryMonitor(Daemon):
                         self.pngprocess = None
                         pass #raise
 
+        def get_buttons(self):
+                # shutdown_btn = Button(int(config['button']['shutdown']))#, hold_time=1)
+                #monitor_btn = Button(int(config['button']['monitor'])) #, hold_time=2)
+
+                self.buttons = dict()
+                for i, ( buttontype, buttonattributes ) in enumerate(config['button'].items()):
+                        buttonname = '{}_{}'.format(buttontype, i) 
+                        buttonpin, buttonhold = buttonattributes
+                        if buttonhold > 0:
+                                if not self.buttons[buttontype]:
+                                        self.buttons[buttontype] = list()
+                                else:
+                                        self.buttons[buttontype].append(tuple(buttonname, Button(buttonpin, hold_time=buttonhold)))
+                        else:
+                                if not self.buttons[buttontype]:
+                                        self.buttons[buttontype] = list()
+                                else:
+
+                                        self.buttons[buttontype].append(tuple(buttonname, Button(buttonpin)))
+
+                            
         def read_battery_voltage(self):
                 total = 0.0
                 loops = 0.0

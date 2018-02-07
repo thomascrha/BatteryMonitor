@@ -1,7 +1,7 @@
 button:
         #set to zero to disable
-        shutdown: 20 #BCM GPIO Pin
-        monitor: 5 #BCM GPIO Pin
+        shutdown: [20, 0] #BCM GPIO Pin
+        monitor: [5, 0] #BCM GPIO Pin
 
 agent:
         pidfile: '/tmp/battery-monitor.pid'
@@ -16,3 +16,9 @@ png:
 gain: 1
 
 icon-timeout: 3
+
+methods:
+        shutdown: self.shutdown
+        monitor: self.display_icon
+        reset: None
+        escape: None
