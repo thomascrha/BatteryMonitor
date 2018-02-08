@@ -50,9 +50,22 @@ class BatteryMonitor(Daemon):
                 if 'methods' not in config.keys():
                         config['methods'] = {'shutdown':self.shutdown, 'monitor':self.display_icon } 
 		
-                # change this to be implied form the config
-		self.adc = Adafruit_ADS1x15.ADS1015()
-                #create setup_pins method allowing fornamic loading
+                if config['ads']['ADS1015']:
+                        if config['ads']['ADS1115']:
+                                print('unable to set up ADS - please have one value true on value false')
+
+                                sys.exit(0)
+                        self.ads = Adafruit_ADS1x15.ADS1015()
+                elif config['ads']['ADS1115']:
+                        if config['ads']['ADS1015']:
+                                print('unable to set up ADS - please have one value true on value false')
+
+                                sys.exit(0)
+                        self.ads = Adafruit_ADS1x15.ADS1115()
+                else:
+                        print('unable to set up ADS - please have one value true on value false')
+                        sys.exit(0)
+
                 self.logger = logfile
                 self.get_buttons()
 
@@ -74,7 +87,7 @@ class BatteryMonitor(Daemon):
                         self.pngprocess.kill()
                         self.pngprocess = None
                         pass #raise
-
+       
         def get_buttons(self):
                 # shutdown_btn = Button(int(config['button']['shutdown']))#, hold_time=1)
                 #monitor_btn = Button(int(config['button']['monitor'])) #, hold_time=2)
@@ -94,21 +107,23 @@ class BatteryMonitor(Daemon):
                 total = 0.0
                 loops = 0.0
                 start = time.time()
-                while (time.time() - start) <= 1.0:
+                while (time.time() - start) <= config['votage_reading']['seconds']:
                         # Read the last ADC conversion value and print it out.
                         try:
-				value = self.adc.read_adc(0, gain=config['gain'])
-			except IOError:
+				value = self.ads.read_adc(0, gain=config['gain'])
+			except IOError: 
+                                print 'ADS IC2 appears not to be working'
 				return None
 						
                         total += float(value)
                         loops += 1.0
-                        time.sleep(0.2)
+                        time.sleep(config['votage_reading']['sleep'])
 
                 value = total/loops
 
                 return round(value, 2)
         def display_icon(self):
+                
                 self.logger.write('display_icon')
                 if not self.percent:
                         self.percent = battery_percent
@@ -117,7 +132,6 @@ class BatteryMonitor(Daemon):
                                                                                             config['png']['icon'], self.percent)
                 subprocess_call = subprocess.Popen(shlex.split(command))
                 self.process_spawner(subprocess_call)
-                #time.sleep(3)
                 if self.pngprocess:
                         self.pngprocess.kill()                 
     
@@ -144,21 +158,22 @@ class BatteryMonitor(Daemon):
                                 #display appropriate icon.
 
         def shutdown(self):
-                
+                if self.combo:
+                        
                 command = 'shutdown -h now'
-                print(command)
-                #subprocess.Popen(shlex.split(command))
+                #print(command)
+                subprocess.Popen(shlex.split(command))
 
         def restart(self):
                 
                 command = 'reboot'
-                print(command)
-                #subprocess.Popen(shlex.split(command))
+                #print(command)
+                subprocess.Popen(shlex.split(command))
                 
         def reset(self):
                 command = 'pkill retroarch & retroarch'
-                print(command)
-                #subprocess.Popen(shlex.split(command))
+                #print(command)
+                subprocess.Popen(shlex.split(command))
                 
 if __name__ == "__main__":
 
@@ -191,4 +206,4 @@ if __name__ == "__main__":
                 else:
                         print("BatteryMonitor agent is running")
 
-        #sys.exit(0)
+        sys.exit(0)
