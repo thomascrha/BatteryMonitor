@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, time
-from daemon import config, LogginSystem, Daemon
+from daemon import config, LogginSystem, Daemon, threaded
 import yaml
 import argparse
 import datetime
@@ -12,6 +12,7 @@ import subprocess
 import Adafruit_ADS1x15
 import shlex
 import psutil
+from pynput.keyboard import Key, Controller
 
 '''
 percentage:
@@ -42,7 +43,22 @@ def arguments_reader():
         return operation
 logfile = open('./battery-monitor.log', 'a+')                
 
+
+
+_KEYS = {'space':Key.space, 'enter': Key.enter, 
+                        'up' :Key.up, 'down': Key.down, 'left':Key.left
+                        'right': Key.right, 'esc':Key.escape} 
+
 class BatteryMonitor(Daemon):
+        def press_key(self, key):
+                if len(key) > 1:
+                        self.keyboard.press(_KEYS[key])
+                        self.keyboard.release(key)
+                        return
+                         
+                self.keyboard.press(key)
+                self.keyboard.release(key)
+    
         def run(self):
                 
                 #fix this - most liekly implent a python config file allowing for logic - will also fix the voltages dict issue
@@ -65,11 +81,23 @@ class BatteryMonitor(Daemon):
                 else:
                         print('unable to set up ADS - please have one value true on value false')
                         sys.exit(0)
-
+                self.keyboard = Controller()
                 self.logger = logfile
                 self.get_buttons()
+                self.get_controller()
+                self.check_controller()
+                self.check_button()
+                                           
+        def get_controller(self):
+                self.controller = dict()
+                for control_name, control_attributes in config['controller'].items():
 
-                while True:
+                        for control_pin, get_controller_keypress in control_attributes.items():
+                                self.controller[control_name] = tuple([Button(control_pin), control_keypress]) 
+        
+        @threaded
+        def check_button(self):
+                 while True:
                             self.battery_percent()
                             for buttontype, buttons in self.buttons.items():
                                     for button in buttons:
@@ -77,7 +105,16 @@ class BatteryMonitor(Daemon):
                                                     button[1].when_held = config['methods'][buttontype]
                                             else:
                                                     button[1].when_pressed = config['methods'][buttontype]
-                            
+
+        @threaded
+        def check_controller(self):
+                control_names = self.controller.keys()
+                while True:
+                        for control_name, control_attributes in self.controller.items():
+                                control_button, control_keypress = control_attributes:
+                                control_button.when_pressed = press_key(control_keypress) 
+                                        
+
         def process_spawner(self, subprocess_call):
 
                 self.pngprocess = psutil.Process(subprocess_call.pid)

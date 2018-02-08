@@ -3,6 +3,8 @@ import os, sys
 import time, datetime
 import atexit
 import signal
+from threading import Thread
+
 global config
 with open("./config.yaml", 'r') as stream:
         try:
@@ -16,6 +18,10 @@ def xfrange(start, stop, step=0.01):
                 yield round(start + i * step, 2)
                 i += 1
 
+def threaded(fn):
+	def wrapper(*args, **kwargs):
+		Thread(target=fn, args=args, kwargs=kwargs).start()
+	return wrapper
 
 if 'voltages' not in config.keys():
         
