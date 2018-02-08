@@ -44,24 +44,27 @@ logfile = open('./battery-monitor.log', 'a+')
 
 class BatteryMonitor(Daemon):
         def run(self):
-		# change this to be implied form the config
+                
+                #fix this - most liekly implent a python config file allowing for logic - will also fix the voltages dict issue
+
+                if 'methods' not in config.keys():
+                        config['methods'] = {'shutdown':self.shutdown, 'monitor':self.display_icon } 
+		
+                # change this to be implied form the config
 		self.adc = Adafruit_ADS1x15.ADS1015()
                 #create setup_pins method allowing fornamic loading
                 self.logger = logfile
-                self.get_buttons
+                self.get_buttons()
 
                 while True:
                             self.battery_percent()
                             for buttontype, buttons in self.buttons.items():
-                                    
                                     for button in buttons:
-                                            if button[1].hold_time > 0:
-                                                    button[1].when_held = config['methods'][buttontype]                                                    
+                                            if button[1].hold_time != 1:
+                                                    button[1].when_held = config['methods'][buttontype]
                                             else:
                                                     button[1].when_pressed = config['methods'][buttontype]
                             
-                            shutdown_btn.when_pressed = self.shutdown
-                            monitor_btn.when_pressed = self.display_icon
         def process_spawner(self, subprocess_call):
 
                 self.pngprocess = psutil.Process(subprocess_call.pid)
@@ -80,17 +83,11 @@ class BatteryMonitor(Daemon):
                 for i, ( buttontype, buttonattributes ) in enumerate(config['button'].items()):
                         buttonname = '{}_{}'.format(buttontype, i) 
                         buttonpin, buttonhold = buttonattributes
-                        if buttonhold > 0:
-                                if not self.buttons[buttontype]:
-                                        self.buttons[buttontype] = list()
-                                else:
-                                        self.buttons[buttontype].append(tuple(buttonname, Button(buttonpin, hold_time=buttonhold)))
+                        if buttontype not in self.buttons.keys():
+                                self.buttons[buttontype] = list()
+                                self.buttons[buttontype].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold)]))
                         else:
-                                if not self.buttons[buttontype]:
-                                        self.buttons[buttontype] = list()
-                                else:
-
-                                        self.buttons[buttontype].append(tuple(buttonname, Button(buttonpin)))
+                                self.buttons[buttontype].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold)]))
 
                             
         def read_battery_voltage(self):
@@ -130,22 +127,39 @@ class BatteryMonitor(Daemon):
 		if raw_voltage:
                 	self.voltage = round(raw_voltage * config['converstion-ratio'], 2)
                         self.logger.write('Votage ' + str(self.voltage) + '\n')
-                        
+                        for key in config['voltages']:
+                                if not self.voltage:
+                                        self.voltage = round(raw_voltage * config['converstion-ratio'], 2)
+                                        self.logger.write('Votage ' + str(self.voltage) + '\n')
+         
+                                if self.voltage in key:
+                                        self.percent = config['voltages'][key] 
+                                        break
+                                self.percent = None 
+
 		else:   
                         #add new state for non configured : create icon
 			self.percent = 100
-                for key in config['voltages']:
-                        if self.voltage in key:
-                                self.percent = config['voltages'][key] 
-                                break
-                        self.percent = None 
-                #display appropriate icon.
+                        self.voltage = 4.1
+                                #display appropriate icon.
 
         def shutdown(self):
+                
                 command = 'shutdown -h now'
-                subprocess.Popen(shlex.split(command))
+                print(command)
+                #subprocess.Popen(shlex.split(command))
 
-
+        def restart(self):
+                
+                command = 'reboot'
+                print(command)
+                #subprocess.Popen(shlex.split(command))
+                
+        def reset(self):
+                command = 'pkill retroarch & retroarch'
+                print(command)
+                #subprocess.Popen(shlex.split(command))
+                
 if __name__ == "__main__":
 
         action = arguments_reader()
