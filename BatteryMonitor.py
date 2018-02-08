@@ -112,6 +112,9 @@ class BatteryMonitor(Daemon):
                 self.logger.write('display_icon')
                 if not self.percent:
                         self.percent = battery_percent
+
+
+
                 command = '{}/pngview -b 0 -l 3000{} -x {} -y {} {}/battery{}.png &'.format(config['png']['path'], self.percent, 
                                                                                             config['png']['x'],config['png']['y'],
                                                                                             config['png']['icon'], self.percent)
