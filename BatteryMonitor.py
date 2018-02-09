@@ -48,7 +48,7 @@ class BatteryMonitor(Daemon):
                 #fix this - most liekly implent a python config file allowing for logic - will also fix the voltages dict issue
 
                 if 'methods' not in config.keys():
-                        config['methods'] = {'shutdown':self.shutdown, 'monitor':self.display_icon } 
+                        config['methods'] = {'shutdown':self.shutdown, 'monitor':self.display_icon() } 
 		
                 if config['ads']['ADS1015']:
                         if config['ads']['ADS1115']:
@@ -76,7 +76,11 @@ class BatteryMonitor(Daemon):
                                             if button[1].hold_time != 1:
                                                     button[1].when_held = config['methods'][buttontype]
                                             else:
-                                                    button[1].when_pressed = config['methods'][buttontype]
+                                                    if button[2]:
+                                                            button[1].when_pressed = config['methods'][buttontype](toggle = True)
+                                                    else:
+                                                            button[1].when_pressed = config['methods'][buttontype](toggle =False 
+
                             
         def process_spawner(self, subprocess_call):
 
@@ -94,13 +98,24 @@ class BatteryMonitor(Daemon):
 
                 self.buttons = dict()
                 for i, ( buttontype, buttonattributes ) in enumerate(config['button'].items()):
-                        buttonname = '{}_{}'.format(buttontype, i) 
-                        buttonpin, buttonhold = buttonattributes
-                        if buttontype not in self.buttons.keys():
-                                self.buttons[buttontype] = list()
-                                self.buttons[buttontype].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold)]))
+                        button_name = '{}_{}'.format(buttontype, i) 
+                        button_pin, button_hold, button_toggle = buttonattributes
+                        if button_type not in self.buttons.keys():
+                                self.buttons[button_type] = list()
+                                if button_toggle:
+                                        button_togglestate = False
+                                        self.buttons[button_type].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold), button_togglestate]))
+                                else:
+                                        self.buttons[button_type].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold)]))
+
                         else:
-                                self.buttons[buttontype].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold)]))
+                                if button_toggle:
+                                        button_togglestate = False
+                                        self.buttons[button_type].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold), button_togglestate]))
+                                else:
+                                        self.buttons[button_type].append(tuple([buttonname, Button(buttonpin, hold_time=buttonhold)]))
+
+
 
                             
         def read_battery_voltage(self):
@@ -122,18 +137,41 @@ class BatteryMonitor(Daemon):
                 value = total/loops
 
                 return round(value, 2)
-        def display_icon(self):
-                
+
+        def do_button(self, button):
+                try:
+                        button_name, button, button_togglestate, button_method = button
+                except:
+                        button_name, button button_method = button
+                        button_togglestate = None
+
+                if button_togglestate not is None:
+                        #toggle
+                        if button_togglestate:
+                                #turn off
+                                display_icon(button_togglestate)
+                        else:
+                                #turn on
+                                display_icon(button_togglestate)
+
+                else:
+                        #no toggle
+
+
+        def display_icon(self, runing):
                 self.logger.write('display_icon')
                 if not self.percent:
                         self.percent = battery_percent
                 command = '{}/pngview -b 0 -l 3000{} -x {} -y {} {}/battery{}.png &'.format(config['png']['path'], self.percent, 
                                                                                             config['png']['x'],config['png']['y'],
                                                                                             config['png']['icon'], self.percent)
-                subprocess_call = subprocess.Popen(shlex.split(command))
-                self.process_spawner(subprocess_call)
-                if self.pngprocess:
-                        self.pngprocess.kill()                 
+                if toggle:
+                        subprocess_call = subprocess.Popen(shlex.split(command)).communicate()  
+                else:
+                        subprocess_call = subprocess.Popen(shlex.split(command))
+                        self.process_spawner(subprocess_call)
+                        if self.pngprocess:
+                                    self.pngprocess.kill()                 
     
         def battery_percent(self):
                 raw_voltage = self.read_battery_voltage()

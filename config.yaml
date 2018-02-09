@@ -2,8 +2,8 @@ ads:
         ADS1015: true
         ADS1115: false
 button:
-        shutdown: [8, 2] #BCM GPIO Pin
-        monitor: [7, 1] #BCM GPIO Pin
+        shutdown: [8, 2, false] #BCM GPIO Pin
+        monitor: [7, 1, true] #BCM GPIO Pin
         
 votage_reading: 
         # number of seconds to get the average
