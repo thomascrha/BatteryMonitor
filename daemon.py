@@ -3,12 +3,11 @@ import os, sys
 import time, datetime
 import atexit
 import signal
+
+
 global config
-with open("./config.yaml", 'r') as stream:
-        try:
-               config = yaml.load(stream)
-        except yaml.YAMLError as exc:
-                print(exc)
+with open("/home/pi/BatteryMonitor/config.yaml", 'r') as stream:
+	config = yaml.load(stream)
 
 def xfrange(start, stop, step=0.01):
         i = 0
@@ -16,9 +15,8 @@ def xfrange(start, stop, step=0.01):
                 yield round(start + i * step, 2)
                 i += 1
 
-
 if 'voltages' not in config.keys():
-        
+
         config['voltages'] = { tuple(xfrange(3.25,3.34)) : 0,
                                   tuple(xfrange(3.35,3.45)) : 25,
                                   tuple(xfrange(3.46,3.67)) : 50,
@@ -116,20 +114,15 @@ class Daemon(object):
 
 
         def start(self):
-                print('here1')
                 pid = self.get_pid()
                 if pid:
                     message = "BatteryMonitor agent already running?"
                     sys.stderr.write(message % self.pidfile)
                     sys.exit(1)
 
-                print('here2')
                 self.daemonize()
-                print('here3')
                 
                 self.run()
-                print('here3')
-                 
 
 
         def get_pid(self):

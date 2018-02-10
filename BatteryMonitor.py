@@ -27,8 +27,6 @@ voltage:
         3.35: 25 # 3.5
         3.25: 0  # 3.2
 '''
-
-
 def arguments_reader():
 
         parser = argparse.ArgumentParser(description='battery-monitor runner')
@@ -48,7 +46,13 @@ class BatteryMonitor(Daemon):
                 #fix this - most liekly implent a python config file allowing for logic - will also fix the voltages dict issue
 
                 if 'methods' not in config.keys():
+<<<<<<< HEAD
+                        config['methods'] = {'shutdown':self.shutdown, 
+                                            'monitor':self.display_icon, 
+                                            'restart':self.restart } 
+=======
                         config['methods'] = {'shutdown':self.shutdown, 'monitor':self.display_icon() } 
+>>>>>>> a0bd88b29a8ec7f1374d207e26af9f389a7b3ff2
 		
                 if config['ads']['ADS1015']:
                         if config['ads']['ADS1115']:
