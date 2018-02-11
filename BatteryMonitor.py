@@ -12,8 +12,7 @@ import subprocess
 import Adafruit_ADS1x15
 import shlex
 import psutil
-from pynput.keyboard import Key, Controller
-
+import keyboard
 '''
 percentage:
         100%: 4.09  # 4.09
@@ -29,7 +28,31 @@ voltage:
         3.25: 0  # 3.2
 '''
 
+'''
 
+import keyboard
+
+keyboard.press_and_release('shift+s, space')
+
+keyboard.write('The quick brown fox jumps over the lazy dog.')
+
+# Press PAGE UP then PAGE DOWN to type "foobar".
+keyboard.add_hotkey('page up, page down', lambda: keyboard.write('foobar'))
+
+# Blocks until you press esc.
+keyboard.wait('esc')
+
+# Record events until 'esc' is pressed.
+recorded = keyboard.record(until='esc')
+# Then replay back at three times the speed.
+keyboard.play(recorded, speed_factor=3)
+
+# Type @@ then press space to replace with abbreviation.
+keyboard.add_abbreviation('@@', 'my.long.email@example.com')
+# Block forever.
+keyboard.wait()
+
+'''
 def arguments_reader():
 
         parser = argparse.ArgumentParser(description='battery-monitor runner')
@@ -45,9 +68,9 @@ logfile = open('./battery-monitor.log', 'a+')
 
 
 
-_KEYS = {'space':Key.space, 'enter': Key.enter, 
-                        'up' :Key.up, 'down': Key.down, 'left':Key.left
-                        'right': Key.right, 'esc':Key.escape} 
+#_KEYS = {'space':Key.space, 'enter': Key.enter, 
+#                        'up' :Key.up, 'down': Key.down, 'left':Key.left,
+#                        'right': Key.right, 'esc':Key.escape} 
 
 class BatteryMonitor(Daemon):
         def press_key(self, key):
@@ -81,7 +104,7 @@ class BatteryMonitor(Daemon):
                 else:
                         print('unable to set up ADS - please have one value true on value false')
                         sys.exit(0)
-                self.keyboard = Controller()
+                #self.keyboard = Controller()
                 self.logger = logfile
                 self.get_buttons()
                 self.get_controller()
@@ -91,9 +114,8 @@ class BatteryMonitor(Daemon):
         def get_controller(self):
                 self.controller = dict()
                 for control_name, control_attributes in config['controller'].items():
-
-                        for control_pin, get_controller_keypress in control_attributes.items():
-                                self.controller[control_name] = tuple([Button(control_pin), control_keypress]) 
+                        control_pin, control_keypress = control_attributes
+                        self.controller[control_name] = tuple([Button(control_pin), control_keypress]) 
         
         @threaded
         def check_button(self):
@@ -111,9 +133,9 @@ class BatteryMonitor(Daemon):
                 control_names = self.controller.keys()
                 while True:
                         for control_name, control_attributes in self.controller.items():
-                                control_button, control_keypress = control_attributes:
-                                control_button.when_pressed = press_key(control_keypress) 
-                                        
+                                control_button, control_keypress = control_attributes
+                                control_button.when_pressed = keyboard.write(control_keypress)#press_key(control_keypress) 
+                                       
 
         def process_spawner(self, subprocess_call):
 
@@ -195,8 +217,6 @@ class BatteryMonitor(Daemon):
                                 #display appropriate icon.
 
         def shutdown(self):
-                if self.combo:
-                        
                 command = 'shutdown -h now'
                 #print(command)
                 subprocess.Popen(shlex.split(command))

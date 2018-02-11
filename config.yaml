@@ -2,22 +2,22 @@ ads:
         ADS1015: true
         ADS1115: false
 button:
-        shutdown: [8, 2] #BCM GPIO Pin
+        #shutdown: [8, 2] #BCM GPIO Pin
         monitor: [7, 1] #BCM GPIO Pin
 
 controller:
         #button_name : [pin, keybaord_value]
-        A: [23, 'a']
+        A: [8, 'a']
         B: [15, 'b']
         X: [16, 'x']
         Y: [10, 'y']
         UP: [11, 'up']
-        DOWN: [8, 'down']
+        DOWN: [19, 'down']
         LEFT: [25, 'left']
         RIGHT: [26, 'right']
         START: [9, 'enter']
-        SELECT: [11, 'shift']
-        ESCAPE: [10, 'esc']
+        SELECT: [20, 'shift']
+        ESCAPE: [21, 'escape']
         L1TRIGGER: [1, 'w']
         R1TRIGGER: [4, 'e']
         L2TRIGGER: [6, 'q']
