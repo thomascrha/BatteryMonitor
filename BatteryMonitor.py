@@ -158,7 +158,6 @@ class BatteryMonitor(Daemon):
                                 #display appropriate icon.
 
         def shutdown(self):
-                if self.combo:
                         
                 command = 'shutdown -h now'
                 #print(command)
