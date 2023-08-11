@@ -1,6 +1,6 @@
 # About:
 
-BatteryMonitor is(will) be the swiss army knife of battery tasks for GameBoyZero.
+BatteryMonitor is be the swiss army knife of battery tasks for GameBoyZero.
 
 Firstly Thank You to @HoolyHoo and @Camble - without there inspiration and code I would be nowhere.
 Please Check out there Repo's
